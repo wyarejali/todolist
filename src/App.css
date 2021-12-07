@@ -1,0 +1,64 @@
+p {
+  margin: 0;
+}
+
+.table > :not(:first-child) {
+  border-top: 2px solid #0d4fb1;
+}
+.flex-4 {
+  flex: 4;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.add-task {
+  padding: 10px 14px;
+  height: 40px;
+  margin-left: 20px;
+  justify-content: end;
+}
+
+.action-btn {
+  margin-right: 5px;
+}
+
+.action-btn-area {
+  display: flex;
+}
+
+td.complete {
+  background: #1987544a;
+}
+td.complete p {
+  color: #198754;
+}
+
+.complete-task svg {
+  font-size: 24px;
+  color: #198754;
+}
+
+.card-body {
+  overflow-y: scroll;
+}
+.card-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.card-body::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+/* Handle */
+.card-body::-webkit-scrollbar-thumb {
+  background: #9e9e9e;
+  border-radius: 20px;
+}
+
+/* Handle on hover */
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

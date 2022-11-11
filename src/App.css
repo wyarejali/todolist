@@ -28,15 +28,12 @@ p {
   display: flex;
 }
 
-td.complete {
-  background: #1987544a;
-}
 td.complete p {
   color: #198754;
 }
 
 .complete-task svg {
-  font-size: 24px;
+  font-size: 18px;
   color: #198754;
 }
 

@@ -12,7 +12,7 @@ const Alert = ({ msg, type, removeAlert }) => {
 
   return (
     <div>
-      <p className={`px-2 py-1 m-0 rounded alert alert-${type}`}>{msg}</p>
+      <p className={`wa_alert wa_alert-${type}`}>{msg}</p>
     </div>
   )
 }

@@ -1,160 +1,169 @@
 // All necessary dependences
-import 'bootstrap/dist/css/bootstrap.min.css'
 import React, { useEffect, useState } from 'react'
 import { BsPencil } from 'react-icons/bs'
 import './App.css'
 import Alert from './components/Alert'
-import Container from './components/Container'
 import TodoList from './components/TodoList'
-import Logo from './assets/logo.jpg'
+import Logo from './assets/logo.png'
+import DeleteModal from './components/DeleteModal'
+import { useGlobalContext } from './context/appContext'
 
-// Get the items from localStorage
-const getLocalStorage = () => {
-  let task = localStorage.getItem('task')
-  if (task) {
-    return JSON.parse(task)
-  } else {
-    return []
-  }
-}
 // App
 function App() {
   // All necessary states
-  const [name, setName] = useState('')
-  const [task, setTask] = useState(getLocalStorage())
+  const [text, setText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editID, setEditId] = useState(null)
-  const [alert, setAlert] = useState({ show: false, msg: '', type: '' })
+
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    tasks,
+    setTasks,
+    filterdTasks,
+    setFilteredText,
+    showAlert,
+    alert,
+    setAlert,
+  } = useGlobalContext()
+
+  console.log(tasks)
 
   // Form submit handler method
   const submitHandler = (e) => {
-    // Disable reload onClick the button
+    // Reset default behavior
     e.preventDefault()
 
-    if (!name) {
+    if (!text) {
       //if input is empy
       showAlert(true, 'The field is required!', 'danger')
-    } else if (name && isEditing) {
+    } else if (text && isEditing) {
       // Update the item & states
-      setTask(
-        task.map((item) => {
-          if (item.id === editID) {
-            return { ...item, title: name, complete: false }
-          }
+      const updatedTasks = tasks.map((item) => {
+        if (item.id === editID) {
+          return { ...item, title: text, complete: false }
+        } else {
           return item
-        })
-      )
-      setName('')
+        }
+      })
+      setTasks(updatedTasks)
+      setText('')
       setEditId(null)
       setIsEditing(false)
 
       // Update item alert
       setAlert({ show: true, msg: 'Task Updated !', type: 'success' })
     } else {
-      // Put new item
-      const newTask = { id: task.length + 1, complete: false, title: name }
-      setTask([...task, newTask])
-      setName('')
+      // Add item
+      const newTask = { id: tasks.length + 1, complete: false, title: text }
+      setTasks([newTask, ...tasks])
+      setText('')
 
-      // Put new item Alert
+      // Success Alert
       showAlert(true, 'Task added successfully !', 'success')
     }
   }
 
-  // Show alert method
-  const showAlert = (show = false, msg = '', type = '') => {
-    setAlert({ show, msg, type })
-  }
+  // Save items to local storage
+  useEffect(() => {
+    localStorage.setItem('task', JSON.stringify(tasks))
+  }, [tasks])
 
   // Edit specific task
   const editHandler = (id) => {
-    const spesificItem = task.find((item) => item.id === id)
+    const spesificItem = tasks.find((item) => item.id === id)
     setIsEditing(true)
     setEditId(id)
-    setName(spesificItem.title)
+    setText(spesificItem.title)
   }
   // Remove specific task
   const removeItem = (id) => {
     showAlert(true, 'Item removed', 'warning')
-    setTask(task.filter((item) => item.id !== id))
+    setTasks(tasks.filter((item) => item.id !== id))
   }
+
   // Complete task method
   const completeItem = (id) => {
-    setTask(
-      task.map((item) => {
+    setTasks(
+      tasks.map((item) => {
         if (item.id === id) {
           return { ...item, complete: true }
         }
 
         // Task Complete alert
-        showAlert(true, 'Task Completed !', 'success')
+        showAlert(true, 'Task Completed !', 'complete')
         return item
       })
     )
   }
 
-  // Save items to local storage
-  useEffect(() => {
-    localStorage.setItem('task', JSON.stringify(task))
-  }, [task])
+  const onFilterChange = (e) => {
+    setFilteredText(e.target.value)
+  }
 
   return (
-    <Container>
-      <div className='card'>
-        <div className='card-header p-3 d-flex justify-content-between align-items-center'>
-          <div className='d-flex align-items-center gap-2'>
-            <div style={{ width: '25px' }}>
+    <section id='wa_todo-list'>
+      {isModalOpen && (
+        <DeleteModal removeItem={removeItem} setIsModalOpen={setIsModalOpen} />
+      )}
+      <div className='wrapper'>
+        <div className='wa_header'>
+          <div className='wa_logo-area'>
+            <div style={{ width: '148px' }}>
               <img width={'100%'} src={Logo} alt='to do list' />
             </div>
-            <h5 className='mb-0'>ToDo List</h5>
           </div>
 
-          {alert.show && (
-            <Alert {...alert} removeAlert={showAlert} list={task} />
-          )}
+          <div className='wa_alert'>
+            {alert.show && (
+              <Alert {...alert} removeAlert={showAlert} list={tasks} />
+            )}
+          </div>
+          <div className='wa_filter'>
+            <label htmlFor='wa_filter'>Filter: </label>
+            <select name='filter' id='wa_filter' onChange={onFilterChange}>
+              <option value='all'>All</option>
+              <option value='completed'>Completed</option>
+              <option value='uncompleted'>Uncomplete</option>
+            </select>
+          </div>
         </div>
-        <div
-          className='card-body'
-          data-mdb-perfect-scrollbar='true'
-          style={{ position: 'relative', height: '400px' }}
-        >
-          {task.length > 0 ? (
+        <div className='wa_body'>
+          {filterdTasks.length > 0 ? (
             <TodoList
-              items={task}
+              filterdTasks={filterdTasks}
               editHandler={editHandler}
+              setIsModalOpen={setIsModalOpen}
               removeItem={removeItem}
               completeItem={completeItem}
             />
           ) : (
-            <p className='text-center'>There is no item</p>
+            <p className='empty'>There is no item</p>
           )}
         </div>
         <form onSubmit={submitHandler}>
-          <div className='card-footer text-end p-3 d-flex justify-content-between'>
-            <div className='input-group flex-4'>
-              <span className='input-group-text'>
-                {' '}
-                <BsPencil />
+          <div className='wa_footer'>
+            <div className='wa_form-group'>
+              <span>
+                <BsPencil fill='#fff' />
               </span>
-              <textarea
-                className='form-control'
-                aria-label='With textarea'
-                rows='1'
-                cols='1'
+              <input
+                className='wa_form-control'
+                type='text'
                 placeholder='Enter task'
-                value={name}
+                value={text}
                 onChange={(e) => {
-                  setName(e.target.value)
+                  setText(e.target.value)
                 }}
-              ></textarea>
+              />
+              <button className='wa_btn'>
+                {isEditing ? 'Update' : 'Add Item'}
+              </button>
             </div>
-            <button className='btn btn-sm btn-primary flex-1 add-task'>
-              {isEditing ? 'Update Task' : 'Add Task'}
-            </button>
           </div>
         </form>
       </div>
-    </Container>
+    </section>
   )
 }
 

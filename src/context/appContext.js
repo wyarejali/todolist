@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 const appContext = createContext()
 
@@ -35,10 +35,25 @@ const AppProvider = ({ children }) => {
     }
   })
 
+  // Complete task method
+  const completeHandler = (id) => {
+    setTasks(
+      tasks.map((item) => {
+        if (item.id === id) {
+          return { ...item, complete: true }
+        }
+
+        // Task Complete alert
+        showAlert(true, 'Task Completed !', 'complete')
+        return item
+      })
+    )
+  }
+
   // Remove specific task
   const removeItem = () => {
     if (deleteId) {
-      showAlert(true, 'Item removed', 'warning')
+      showAlert(true, 'Deleted Successfully!', 'warning')
       setTasks(tasks.filter((item) => item.id !== deleteId))
     }
     setIsModalOpen(false)
@@ -52,6 +67,11 @@ const AppProvider = ({ children }) => {
       setIsModalOpen(false)
     }
   }
+
+  // Save items to local storage
+  useEffect(() => {
+    localStorage.setItem('task', JSON.stringify(tasks))
+  }, [tasks])
 
   return (
     <appContext.Provider
@@ -70,6 +90,7 @@ const AppProvider = ({ children }) => {
         allSelected,
         setAllSelected,
         removeAllItems,
+        completeHandler,
       }}
     >
       {children}

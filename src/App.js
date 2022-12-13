@@ -1,5 +1,5 @@
 // All necessary dependences
-import React, { useEffect, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { BsPencil } from 'react-icons/bs'
 import './App.css'
 import Alert from './components/Alert'
@@ -7,6 +7,8 @@ import TodoList from './components/TodoList'
 import Logo from './assets/logo.png'
 import DeleteModal from './components/DeleteModal'
 import { useGlobalContext } from './context/appContext'
+import Filter from './components/Filter'
+import { useEffect } from 'react'
 
 // App
 function App() {
@@ -14,20 +16,17 @@ function App() {
   const [text, setText] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [editID, setEditId] = useState(null)
+  const editRef = useRef()
 
   const {
     isModalOpen,
-    setIsModalOpen,
     tasks,
     setTasks,
     filterdTasks,
-    setFilteredText,
     showAlert,
     alert,
     setAlert,
   } = useGlobalContext()
-
-  console.log(tasks)
 
   // Form submit handler method
   const submitHandler = (e) => {
@@ -36,12 +35,17 @@ function App() {
 
     if (!text) {
       //if input is empy
-      showAlert(true, 'The field is required!', 'danger')
+      showAlert(true, 'Field is required!', 'danger')
     } else if (text && isEditing) {
       // Update the item & states
       const updatedTasks = tasks.map((item) => {
         if (item.id === editID) {
-          return { ...item, title: text, complete: false }
+          return {
+            ...item,
+            title: text,
+            createdAt: new Date(),
+            complete: false,
+          }
         } else {
           return item
         }
@@ -52,22 +56,22 @@ function App() {
       setIsEditing(false)
 
       // Update item alert
-      setAlert({ show: true, msg: 'Task Updated !', type: 'success' })
+      setAlert({ show: true, msg: 'Updated Successfully!', type: 'success' })
     } else {
       // Add item
-      const newTask = { id: tasks.length + 1, complete: false, title: text }
+      const newTask = {
+        id: tasks.length + 1,
+        createdAt: new Date(),
+        complete: false,
+        title: text,
+      }
       setTasks([newTask, ...tasks])
       setText('')
 
       // Success Alert
-      showAlert(true, 'Task added successfully !', 'success')
+      showAlert(true, 'Added successfully!', 'success')
     }
   }
-
-  // Save items to local storage
-  useEffect(() => {
-    localStorage.setItem('task', JSON.stringify(tasks))
-  }, [tasks])
 
   // Edit specific task
   const editHandler = (id) => {
@@ -76,36 +80,18 @@ function App() {
     setEditId(id)
     setText(spesificItem.title)
   }
-  // Remove specific task
-  const removeItem = (id) => {
-    showAlert(true, 'Item removed', 'warning')
-    setTasks(tasks.filter((item) => item.id !== id))
-  }
 
-  // Complete task method
-  const completeItem = (id) => {
-    setTasks(
-      tasks.map((item) => {
-        if (item.id === id) {
-          return { ...item, complete: true }
-        }
-
-        // Task Complete alert
-        showAlert(true, 'Task Completed !', 'complete')
-        return item
-      })
-    )
-  }
-
-  const onFilterChange = (e) => {
-    setFilteredText(e.target.value)
-  }
+  useEffect(() => {
+    if (editRef.current) {
+      const end = editRef.current.value.length
+      editRef.current.setSelectionRange(end, end)
+      editRef.current.focus()
+    }
+  }, [isEditing])
 
   return (
     <section id='wa_todo-list'>
-      {isModalOpen && (
-        <DeleteModal removeItem={removeItem} setIsModalOpen={setIsModalOpen} />
-      )}
+      {isModalOpen && <DeleteModal />}
       <div className='wrapper'>
         <div className='wa_header'>
           <div className='wa_logo-area'>
@@ -113,41 +99,26 @@ function App() {
               <img width={'100%'} src={Logo} alt='to do list' />
             </div>
           </div>
-
-          <div className='wa_alert'>
-            {alert.show && (
-              <Alert {...alert} removeAlert={showAlert} list={tasks} />
-            )}
-          </div>
-          <div className='wa_filter'>
-            <label htmlFor='wa_filter'>Filter: </label>
-            <select name='filter' id='wa_filter' onChange={onFilterChange}>
-              <option value='all'>All</option>
-              <option value='completed'>Completed</option>
-              <option value='uncompleted'>Uncomplete</option>
-            </select>
-          </div>
+          {alert.show && (
+            <Alert {...alert} removeAlert={showAlert} list={tasks} />
+          )}
+          <Filter />
         </div>
         <div className='wa_body'>
           {filterdTasks.length > 0 ? (
-            <TodoList
-              filterdTasks={filterdTasks}
-              editHandler={editHandler}
-              setIsModalOpen={setIsModalOpen}
-              removeItem={removeItem}
-              completeItem={completeItem}
-            />
+            <TodoList filterdTasks={filterdTasks} editHandler={editHandler} />
           ) : (
-            <p className='empty'>There is no item</p>
+            <p className='empty'>No item found!</p>
           )}
         </div>
-        <form onSubmit={submitHandler}>
-          <div className='wa_footer'>
+        <div className='wa_footer'>
+          <form onSubmit={submitHandler}>
             <div className='wa_form-group'>
               <span>
                 <BsPencil fill='#fff' />
               </span>
               <input
+                ref={editRef}
                 className='wa_form-control'
                 type='text'
                 placeholder='Enter task'
@@ -160,8 +131,8 @@ function App() {
                 {isEditing ? 'Update' : 'Add Item'}
               </button>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </section>
   )

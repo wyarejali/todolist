@@ -36,7 +36,7 @@ const DeleteModal = () => {
               setAllSelected(false)
             }}
           >
-            Cancel
+            No, Cancel
           </button>
         </div>
       </div>

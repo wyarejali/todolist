@@ -2,10 +2,12 @@
 import { AiOutlineCheck } from 'react-icons/ai'
 import { BsCheckAll, BsPencilSquare, BsTrash } from 'react-icons/bs'
 import { useGlobalContext } from '../context/appContext'
+import { formatDate } from '../helper/dateFormater'
 
 // ToDoList
-const TodoList = ({ filterdTasks, editHandler, completeItem }) => {
-  const { setIsModalOpen, setDeleteId, setAllSelected } = useGlobalContext()
+const TodoList = ({ filterdTasks, editHandler }) => {
+  const { setIsModalOpen, setDeleteId, setAllSelected, completeHandler } =
+    useGlobalContext()
   return (
     <>
       <table className='wa_list-area'>
@@ -13,6 +15,7 @@ const TodoList = ({ filterdTasks, editHandler, completeItem }) => {
           <tr>
             <th>#</th>
             <th>Task</th>
+            <th>Date</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -20,13 +23,21 @@ const TodoList = ({ filterdTasks, editHandler, completeItem }) => {
 
         <tbody>
           {filterdTasks.map((item, index) => {
-            const { id, title, complete } = item
+            const { id, createdAt, title, complete } = item
             return (
               <tr key={index}>
                 <td width=''>{index === 0 ? 1 + '.' : index + 1 + '.'}</td>
                 <td width='100%'>
                   <p className={`wa_item ${complete ? 'completed' : ''}`}>
                     {title}
+                  </p>
+                </td>
+                <td>
+                  <p
+                    className='wa_date'
+                    style={{ fontSize: '12px', opacity: '.7' }}
+                  >
+                    {formatDate(createdAt)}
                   </p>
                 </td>
                 <td>
@@ -45,7 +56,7 @@ const TodoList = ({ filterdTasks, editHandler, completeItem }) => {
                         complete ? 'wa_task-completed' : ''
                       }`}
                       onClick={() => {
-                        completeItem(id)
+                        completeHandler(id)
                       }}
                     >
                       {complete ? <BsCheckAll /> : <AiOutlineCheck />}
@@ -78,7 +89,7 @@ const TodoList = ({ filterdTasks, editHandler, completeItem }) => {
         {filterdTasks.length > 1 && (
           <tfoot>
             <tr>
-              <td colSpan={4} style={{ textAlign: 'center' }}>
+              <td colSpan={5} style={{ textAlign: 'center' }}>
                 <button
                   className='wa_btn wa_delete-all'
                   onClick={() => {

@@ -183,7 +183,7 @@ button.wa_warning-btn.cancel {
   border-collapse: collapse;
   width: 100%;
   display: block;
-  height: calc(100vh - 358px);
+  height: calc(100vh - 184px);
   overflow: auto;
 }
 

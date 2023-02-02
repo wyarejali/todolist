@@ -108,7 +108,7 @@ function App() {
           {filterdTasks.length > 0 ? (
             <TodoList filterdTasks={filterdTasks} editHandler={editHandler} />
           ) : (
-            <p className='empty'>No item found!</p>
+            <p className='wa_empty'>No item found!</p>
           )}
         </div>
         <div className='wa_footer'>

@@ -1,20 +1,20 @@
 :root {
-  --clr-primary: #0ce7f3;
+  --clr-primary: #0ca6f3;
   --clr-secondary: #010326;
-  --clr-light: #fff;
+  --clr-light: #ffffff;
   --clr-active: #33ae10;
   --clr-complete: #5454e8;
   --clr-update: #00d866;
   --clr-delete: #ff7849;
 }
-#wa_todo-list {
+.wa_todo-list {
   position: relative;
   max-width: 768px;
   margin: 0 auto;
   font-size: 14px;
 }
 
-.wrapper {
+.wa_wrapper {
   background: var(--clr-light);
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
@@ -24,12 +24,20 @@
   margin: 20px 0;
 }
 
+@media (max-width: 768px) {
+  .wa_wrapper {
+    height: 100vh;
+    margin: 0;
+  }
+}
+
 .wa_btn {
   transition: all 0.2s ease-in-out;
+  opacity: 0.8;
 }
 .wa_btn:hover {
   transform: scale(0.95);
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .wa_btn:disabled {
@@ -48,6 +56,7 @@
 
 .wa_logo-area {
   display: flex;
+  width: 148px;
   gap: 7px;
   align-items: center;
 }
@@ -74,12 +83,17 @@ p.wa_alert.wa_alert-warning {
   background: var(--clr-delete);
 }
 
-select#wa_filter {
-  background: #08c5cf;
+select.wa_filter {
+  background: var(--clr-light);
   padding: 5px;
   border-radius: 50px;
   outline: none;
   cursor: pointer;
+}
+
+.wa_filter-area label {
+  color: var(--clr-light);
+  font-weight: 600;
 }
 /* todo list body 
 ------------------------------------ */
@@ -89,7 +103,7 @@ select#wa_filter {
   padding: 10px 20px;
 }
 
-p.empty {
+p.wa_empty {
   text-align: center;
 }
 
@@ -106,7 +120,7 @@ p.empty {
   justify-content: center;
   background: #01032652;
   backdrop-filter: blur(3px);
-  z-index: 9;
+  z-index: 99;
 }
 
 .wa_wrapper-modal {
@@ -169,7 +183,7 @@ button.wa_warning-btn.cancel {
   border-collapse: collapse;
   width: 100%;
   display: block;
-  height: calc(100vh - 184px);
+  height: calc(100vh - 358px);
   overflow: auto;
 }
 
@@ -204,7 +218,18 @@ button.wa_warning-btn.cancel {
 .wa_table-header {
   position: sticky;
   top: 0;
+  z-index: 9;
 }
+
+.wa_date {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.wa_list-area tfoot {
+  text-align: center;
+}
+
 p.wa_item.completed {
   text-decoration: line-through;
   opacity: 0.6;
@@ -277,24 +302,31 @@ button.wa_action-btn {
 .wa_delete-all {
   background: var(--clr-delete);
   color: var(--clr-light);
-  padding: 10px 20px;
+  padding: 8px 20px;
   border-radius: 50px;
 }
 
 /* todo list footer 
 ------------------------------- */
+.wa_form-control {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
 
-input.wa_form-control {
-  flex-grow: 1;
+input.wa_input-control {
+  flex: 1;
   background: #013350;
   color: var(--clr-light) !important;
   border: 1px solid transparent !important;
   outline: none;
   border-radius: 30px;
-  padding: 7px 20px !important;
+  padding: 8px 20px !important;
 }
 
-input.wa_form-control:focus {
+input.wa_input-control:focus {
   border-color: var(--clr-primary) !important;
 }
 
@@ -318,7 +350,8 @@ input.wa_form-control:focus {
   font-size: 14px;
 }
 
-.wa_form-group .wa_btn:hover {
-  background: var(--clr-light);
-  color: var(--clr-secondary);
+@media (max-width: 390px) {
+  .wa_form-group .wa_btn {
+    padding: 8px 10px;
+  }
 }

@@ -90,9 +90,9 @@ function App() {
   }, [isEditing])
 
   return (
-    <section id='wa_todo-list'>
+    <section className='wa_todo-list'>
       {isModalOpen && <DeleteModal />}
-      <div className='wrapper'>
+      <div className='wa_wrapper'>
         <div className='wa_header'>
           <div className='wa_logo-area'>
             <div style={{ width: '148px' }}>
@@ -114,22 +114,24 @@ function App() {
         <div className='wa_footer'>
           <form onSubmit={submitHandler}>
             <div className='wa_form-group'>
-              <span>
+              <div>
                 <BsPencil fill='#fff' />
-              </span>
-              <input
-                ref={editRef}
-                className='wa_form-control'
-                type='text'
-                placeholder='Enter task'
-                value={text}
-                onChange={(e) => {
-                  setText(e.target.value)
-                }}
-              />
-              <button className='wa_btn'>
-                {isEditing ? 'Update' : 'Add Item'}
-              </button>
+              </div>
+              <div className='wa_form-control'>
+                <input
+                  ref={editRef}
+                  className='wa_input-control'
+                  type='text'
+                  placeholder='Enter task'
+                  value={text}
+                  onChange={(e) => {
+                    setText(e.target.value)
+                  }}
+                />
+                <button className='wa_btn'>
+                  {isEditing ? 'Update' : 'Add Item'}
+                </button>
+              </div>
             </div>
           </form>
         </div>

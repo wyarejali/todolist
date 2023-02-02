@@ -8,9 +8,14 @@ const Filter = () => {
     setFilteredText(e.target.value)
   }
   return (
-    <div className='wa_filter'>
-      <label htmlFor='wa_filter'>Filter: </label>
-      <select name='filter' id='wa_filter' onChange={onFilterChange}>
+    <div className='wa_filter-area'>
+      <label htmlFor='filter'>Filter: </label>
+      <select
+        className='wa_filter'
+        name='filter'
+        id='filter'
+        onChange={onFilterChange}
+      >
         <option value='all'>All</option>
         <option value='completed'>Completed</option>
         <option value='uncompleted'>Uncomplete</option>
